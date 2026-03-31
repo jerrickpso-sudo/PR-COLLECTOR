@@ -1,7 +1,7 @@
 streamlit
 pandas
-PyMuPDF==1.23.26
-deep-translator==1.11.4
-pytesseract==0.3.10
-Pillow==10.2.0
-supabase==2.3.4
+PyMuPDF
+deep-translator
+pytesseract
+Pillow
+supabase
