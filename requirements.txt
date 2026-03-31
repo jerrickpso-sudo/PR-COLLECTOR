@@ -1,0 +1,6 @@
+streamlit
+pandas
+PyMuPDF
+googletrans==3.1.0a0
+pytesseract
+Pillow
