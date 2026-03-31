@@ -133,11 +133,16 @@ SORTED_DICT_KEYS = sorted(COMBINED_DICT.keys(), key=len, reverse=True)
 MONEY_PATTERN = re.compile(r'(?:R\$|USD|HKD|RS|US\$|U\$)\s*\d{1,10}(?:[., ]\d{3})*(?:[.,]\s*\d{2})?\b|\b\d{1,10}(?:[., ]\d{3})*[.,]\s*\d{2}\b', re.IGNORECASE)
 CHINESE_PATTERN = re.compile(r'[\u4e00-\u9fa5]')
 
+# 🔥 黑名单大清洗：彻底封杀底注声明和表头垃圾
 BLACKLIST_PHRASES = [
     "pso director confirm", "application and approval", "tipo de solicitação", 
     "invoice/submiting date", "description/descrição", "total request amount", 
     "authorized pso", "signature/assinatura", "name (capital letter)", 
-    "x pso", "cashier", "direct applicant", "remark/"
+    "x pso", "cashier", "direct applicant", "remark/",
+    "pso director will authorize", "authorize to pso colleague", 
+    "under authorization limit", "over the authorization limit",
+    "need pso director to approve", "just need authorized pso",
+    "vpower group overseas power plant", "pp03-023-a"
 ]
 
 def translate_text(text, use_google=False):
@@ -587,12 +592,10 @@ if not f_df.empty:
         else:
             st.info("💡 切换回【全部电站】以查看跨电站开销分布图。")
 
-# 🚀 核心 UI 变更：更友好的提示信息与一键删除复选框
 st.markdown("<h4 style='font-weight: 600; margin-top: 2rem; margin-bottom: 0.5rem;'>📝 数据明细 (云端双向同步)</h4>", unsafe_allow_html=True)
 st.info("💡 **如何修改或删除？** 双击单元格即可修改文字；若需删除某行，请勾选该行最左侧的 **「🗑️ 勾选删除」**，完成后点击下方蓝色保存按钮即可。")
 
 if not f_df.empty:
-    # 插入删除辅助列
     f_df.insert(0, "🗑️ 勾选删除", False)
     
     edited_df = st.data_editor(
@@ -607,12 +610,9 @@ if not f_df.empty:
         }
     )
     
-    # 调整列宽占比，让按钮有足够的呼吸空间
     col_btn1, col_btn2 = st.columns([2, 5])
     with col_btn1:
         if st.button("💾 保存数据更改 (云端同步)"):
-            
-            # 1. 抓取被明确勾选“删除”的行，以及被原生编辑器移掉的行
             rows_to_delete = edited_df[edited_df["🗑️ 勾选删除"] == True]
             deleted_ids_explicit = set(rows_to_delete["ID"].dropna())
             
@@ -623,11 +623,9 @@ if not f_df.empty:
             all_deleted_ids = deleted_ids_explicit.union(deleted_ids_native)
             
             try:
-                # 远端批量删除
                 if all_deleted_ids:
                     supabase.table("pr_database").delete().in_("id", list(all_deleted_ids)).execute()
                 
-                # 远端批量更新/插入 (跳过已被勾选删除的行)
                 records_to_upsert = []
                 for idx, row in edited_df.iterrows():
                     if row.get("🗑️ 勾选删除"): 
