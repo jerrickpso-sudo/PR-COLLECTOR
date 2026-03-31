@@ -52,7 +52,7 @@ html, body, [class*="css"] { font-family: -apple-system, BlinkMacSystemFont, "SF
     transition: all 0.3s ease !important; 
     font-weight: 500 !important; 
     padding: 0.5rem 1.5rem !important; 
-    white-space: nowrap !important; /* 强制按钮文字不换行 */
+    white-space: nowrap !important; 
 }
 .stButton>button:hover { background-color: #0077ED !important; transform: scale(1.03); box-shadow: 0 6px 10px rgba(0, 113, 227, 0.3) !important; }
 .stDownloadButton>button { border-radius: 980px !important; background-color: #ffffff !important; color: #1d1d1f !important; border: 1px solid #d2d2d7 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important; transition: all 0.3s ease !important; }
@@ -133,7 +133,7 @@ SORTED_DICT_KEYS = sorted(COMBINED_DICT.keys(), key=len, reverse=True)
 MONEY_PATTERN = re.compile(r'(?:R\$|USD|HKD|RS|US\$|U\$)\s*\d{1,10}(?:[., ]\d{3})*(?:[.,]\s*\d{2})?\b|\b\d{1,10}(?:[., ]\d{3})*[.,]\s*\d{2}\b', re.IGNORECASE)
 CHINESE_PATTERN = re.compile(r'[\u4e00-\u9fa5]')
 
-# 🔥 黑名单大清洗：彻底封杀底注声明和表头垃圾
+# 🔥 升级版黑名单大清洗：彻底封杀底注声明和表头垃圾
 BLACKLIST_PHRASES = [
     "pso director confirm", "application and approval", "tipo de solicitação", 
     "invoice/submiting date", "description/descrição", "total request amount", 
@@ -142,7 +142,8 @@ BLACKLIST_PHRASES = [
     "pso director will authorize", "authorize to pso colleague", 
     "under authorization limit", "over the authorization limit",
     "need pso director to approve", "just need authorized pso",
-    "vpower group overseas power plant", "pp03-023-a"
+    "vpower group overseas power plant", "pp03-023-a",
+    "staff name", "nome do funcionário", "estoque", "project code", "location and power"
 ]
 
 def translate_text(text, use_google=False):
